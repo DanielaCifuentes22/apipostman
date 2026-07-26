@@ -79,3 +79,59 @@ app.get("/api/clientes/:id", (req, res)=>{
         datos: cliente
     });
 });
+
+//POST: Registrar un cliente.
+app.post("/api/clientes", (req, res)=>{
+    const {nombre, documento, direccion, telefono, correo} = req.body;
+
+    //Validar campos obligatorios.
+    if(
+        nombre === undefined||
+        documento === undefined||
+        direccion === undefined||
+        telefono === undefined ||
+        correo === undefined
+    ){
+        return res.status(400).json({
+            error: "Todos los campos son obligatorios",
+            camposRequeridos: ["nombre", "documento", "direccion", "telefono", "correo"]
+        });
+    }
+
+    //Validar documento que no se repita.
+    const clienteExistente = clientes.find(
+    (cliente) => cliente.documento === documento
+    );
+
+    if (clienteExistente) {
+        return res.status(400).json({
+        error: "El documento ya se encuentra registrado."
+    });
+}
+
+    //Validar contenido de los campos.
+    if(typeof nombre!== "string"||nombre.trim() === ""){
+        return res.status(400).json({
+            error: "El nombre debe ser un texto válido"
+        });
+    }
+    if (typeof correo !== "string" || !correo.includes("@")) {
+        return res.status(400).json({
+        error: "El correo electrónico no es válido."
+        });
+    }
+    const nuevoCliente = {
+        id: siguienteId,
+        nombre: nombre.trim(),
+        documento: documento.trim(),
+        direccion: direccion.trim(),
+        telefono: telefono.trim(),
+        corre: correo.trim()
+    };
+    clientes.push(nuevoCliente);
+    siguienteId++;
+    res.status(201).json({
+        mensaje: "Cliente registrado correctamente",
+        datos: nuevoCliente
+    });
+});
