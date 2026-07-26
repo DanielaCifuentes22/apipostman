@@ -35,3 +35,18 @@ let clientes = [
     }
 ];
 let siguienteId = 4;
+
+//Ruta principal
+app.get("/", (req, res)=>{
+    res.status(200).json({
+        mensaje: "API de clientes funcionando correctamente",
+        endpoints: {
+            consultarTodos: "GET/api/clientes",
+            consultarUno: "GET/api/clientes/:id",
+            registrar: "POST/api/clientes",
+            actualizar: "PUT/api/clientes/:id",
+            actualizarParcialmente: "PATCH/api/clientes/:id",
+            eliminar: "DELETE/api/clientes/:id"
+        }
+    });
+});
