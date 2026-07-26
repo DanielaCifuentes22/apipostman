@@ -50,3 +50,32 @@ app.get("/", (req, res)=>{
         }
     });
 });
+
+//GET: Consultar todos los clientes.
+app.get("/api/clientes", (req, res)=>{
+    res.status(200).json({
+        mensaje: "Clientes consultados correctamente",
+        cantidad: clientes.length,
+        datos: clientes
+    });
+});
+
+//GET: Consultar un cliente por ID.
+app.get("/api/clientes/:id", (req, res)=>{
+    const id = Number(req.params.id);
+    if(!Number.isInteger(id)||id<=0){
+        return res.status(400).json({
+            error: "El ID debe ser un número entero positivo"
+        });
+    }
+    const cliente = clientes.find((item)=>item.id===id);
+    if(!cliente){
+        return res.status(404).json({
+            error: `No se encontró un cliente con el ID ${id}`
+        });
+    }
+    res.status(200).json({
+        mensaje: "Cliente consultado correctamente",
+        datos: cliente
+    });
+});
