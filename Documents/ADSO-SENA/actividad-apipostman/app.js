@@ -273,3 +273,12 @@ app.delete("/api/clientes/:id", (req, res) => {
     datos: clienteEliminado
   });
 });
+
+// Middleware para rutas inexistentes.
+app.use((req, res) => {
+  res.status(404).json({
+    error: "Ruta no encontrada",
+    metodo: req.method,
+    ruta: req.originalUrl
+  });
+});
