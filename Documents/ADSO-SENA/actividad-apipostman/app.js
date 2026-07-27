@@ -282,3 +282,12 @@ app.use((req, res) => {
     ruta: req.originalUrl
   });
 });
+
+// Middleware general para errores inesperados.
+app.use((error, req, res, next) => {
+  console.error(error);
+
+  res.status(500).json({
+    error: "Se presentó un error interno en el servidor"
+  });
+});
