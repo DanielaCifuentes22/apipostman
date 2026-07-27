@@ -253,3 +253,23 @@ if (documento !== undefined) {
     datos: clientes[indice]
   });
 });
+
+// DELETE: eliminar un cliente.
+app.delete("/api/clientes/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const indice = clientes.findIndex((item) => item.id === id);
+
+  if (indice === -1) {
+    return res.status(404).json({
+      error: `No se encontró un cliente con el ID ${id}`
+    });
+  }
+
+  const clienteEliminado = clientes[indice];
+  clientes.splice(indice, 1);
+
+  res.status(200).json({
+    mensaje: "Cliente eliminado correctamente",
+    datos: clienteEliminado
+  });
+});
