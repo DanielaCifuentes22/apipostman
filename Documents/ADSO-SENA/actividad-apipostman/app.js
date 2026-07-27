@@ -192,3 +192,64 @@ app.put("/api/clientes/:id", (req, res)=>{
         datos: clientes[indice]
     });
 });
+//PATCH: Actualizar parcialmente un cliente.
+app.patch("/api/clientes/:id", (req, res)=>{
+    const id = Number(req.params.id);
+    const indice = clientes.findIndex((item)=>item.id===id);
+    if(indice===-1){
+        return res.status(404).json({
+            error: `No se encontró un cliente con el ID ${id}`
+        });
+    }
+    const camposPermitidos = ["nombre", "documento", "direccion", "telefono", "correo"];
+    const camposRecibidos = Object.keys(req.body);
+    if(camposRecibidos.length === 0){
+        return res.status(400).json({
+            error: "Debe enviar al menos un campo para actualizar"
+        });
+    }
+    const camposNoPermitidos = camposRecibidos.filter(
+    (campo)=>!camposPermitidos.includes(campo)
+);
+if(camposNoPermitidos.length>0){
+    return res.status(400).json({
+        error: "Se enviaron campos no permitidos.",
+        camposNoPermitidos,
+        camposPermitidos
+    });
+}
+const {nombre, documento, direccion, telefono, correo} = req.body;
+if(
+    nombre !== undefined &&
+    (typeof nombre !== "string"|| nombre.trim() ==="")
+){
+    return res.status(400).json({
+        error: "El nombre debe ser un texto válido."
+    });
+}
+if (documento !== undefined) {
+    const documentoExistente = clientes.find(
+        (cliente) =>cliente.documento === documento && cliente.id !== id
+    );
+
+    if (documentoExistente) {
+        return res.status(400).json({
+            error: "El documento ya está registrado por otro cliente."
+        });
+    }
+}
+
+ clientes[indice] = {
+    ...productos[indice],
+    ...(nombre !== undefined && { nombre: nombre.trim() }),
+    ...(documento !== undefined && { documento: documento.trim() }),
+    ...(direccion !== undefined && { direccion: direccion.trim() }),
+    ...(telefono !== undefined && { telefono: telefono.trim() }),
+    ...(correo !== undefined && { correo: correo.trim() })
+  };
+
+  res.status(200).json({
+    mensaje: "Cliente actualizado parcialmente",
+    datos: clientes[indice]
+  });
+});
