@@ -291,3 +291,9 @@ app.use((error, req, res, next) => {
     error: "Se presentó un error interno en el servidor"
   });
 });
+
+
+// Iniciar servidor.
+app.listen(PORT, () => {
+  console.log(`Servidor ejecutándose en http://localhost:${PORT}`);
+});
