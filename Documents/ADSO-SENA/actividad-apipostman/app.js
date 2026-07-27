@@ -135,3 +135,60 @@ app.post("/api/clientes", (req, res)=>{
         datos: nuevoCliente
     });
 });
+
+//PUT: Actualizar completamente un cliente.
+app.put("/api/clientes/:id", (req, res)=>{
+    const id = Number(req.params.id);
+    const {nombre, documento, direccion, telefono, correo} = req.body;
+    const indice = clientes.findIndex((item)=>item.id === id);
+    if(indice === -1){
+        return res.status(404).json({
+            error: `No se encontró un cliente con el ID ${id}`
+        });
+    }
+
+    if(
+        nombre === undefined||
+        documento === undefined||
+        direccion === undefined||
+        telefono === undefined ||
+        correo === undefined
+    ){
+        return res. status(400).json({
+            error: "Para usar PUT debe enviarse todos los campos"
+        });
+    }
+
+    const documentoExistente = clientes.find(
+    (cliente) =>cliente.documento === documento && cliente.id !== id
+    );
+
+    if (documentoExistente) {
+        return res.status(400).json({
+        error: "El documento ya está registrado por otro cliente."
+        });
+    }
+
+    if(typeof nombre!=="string"||nombre.trim()===""){
+        return res.status(400).json({
+            error: "El nombre debe ser un texto válido"
+        });
+    }
+    if (typeof correo !== "string" || !correo.includes("@")) {
+        return res.status(400).json({
+        error: "El correo electrónico no es válido."
+        });
+    }
+    clientes[indice] = {
+        id,
+        nombre: nombre.trim(),
+        documento: documento.trim(),
+        direccion: direccion.trim(),
+        telefono: telefono.trim(),
+        corre: correo.trim()
+    };
+    res.status(200).json({
+        mensaje: "Cliente actualizado completamente.",
+        datos: clientes[indice]
+    });
+});
